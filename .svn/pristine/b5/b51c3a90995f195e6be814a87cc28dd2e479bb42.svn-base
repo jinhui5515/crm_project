@@ -1,0 +1,14 @@
+package com.atguigu.crm.dao;
+
+import java.util.List;
+
+import com.atuigu.crm.entity.SalesPlan;
+
+public interface SalesPlanMapper {
+	
+	//辅助查询SalesChance
+	public List<SalesPlan> getSalesPalnByChance(Integer chanceId);
+	
+	//查询salesPlan
+	public SalesPlan getSlaesPlan(Integer id);
+}

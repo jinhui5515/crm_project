@@ -1,0 +1,20 @@
+package com.atguigu.crm.handler;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@RequestMapping(value="/plan")
+@Controller
+public class SalesPlanCotroller
+{
+
+	@RequestMapping(value="/chance/list",method=RequestMethod.GET)
+	public String list()
+	{
+		System.out.println("SalesPlanCotroller");
+		return "plan/list";
+	}
+	
+	
+}

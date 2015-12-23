@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<MenuConfig>
+
+  <Displayers>
+    <Displayer   name="DropDown"
+                 type="net.sf.navigator.displayer.DropDownMenuDisplayer"/>
+  </Displayers>
+
+  <Menus>
+
+    <Menu  name="ToDoListMenuFile"  title="客户关系管理系统"  description="test" width="50">
+       <Item   name="TDLnew"   title="营销管理">
+           <Item   name="TDLnewcase"   title="营销机会管理"    image="images/case-new.png"
+                   location="chance/list"/>
+           <Item   name="TDLnewitem"    title="客户开发计划"   image="images/item-new.png"
+                   location="plan/chance/list"/>
+       </Item>
+       
+       <Item   name="TDLopen"   title="客户管理">
+           <Item   name="TDLopencase"    title="客户信息管理"   image="images/case-open.png"
+                    location="customer/list"/>
+           <Item   name="TDLopenitem"   title="客户流失管理"    image="images/item-open.png"
+                    location="index.jsp"/>
+           
+       </Item>
+       <Item    name="TDLexit"  title="EXIT"
+                image="images/exit.png"   location="index.jsp"/>
+    </Menu>
+
+  </Menus>
+
+</MenuConfig>

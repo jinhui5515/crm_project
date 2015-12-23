@@ -1,0 +1,105 @@
+package com.atguigu.crm.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import com.atuigu.crm.entity.SalesChance;
+import com.atuigu.crm.entity.SalesPlan;
+import com.atuigu.crm.entity.User;
+
+
+public interface SalesChanceMapper
+{
+	
+	@Select(value="select id,name from users")
+	public List<User> getUsers();
+	
+	@Update("UPDATE sales_chances s SET source = #{source}, cust_name = #{custName}, "
+			+ "rate = #{rate}, title = #{title}, contact = #{contact}, contact_tel = #{contactTel}, "
+			+ "description = #{description} "
+			+ "WHERE id = #{id}")
+	void update(SalesChance salesChance);
+	
+	
+	
+	@Update("UPDATE sales_chances SET status = #{status}, "
+			+ "designee_id = #{designee.id},designee_date = #{designeeDate} "
+			+ "WHERE id = #{id}")
+	void updateDesignee(SalesChance salesChance);
+	
+	
+	@Select("SELECT s.id, source, cust_name, rate, title, "
+			+ "contact, contact_tel, description, create_date, u.name as \"createBy.name\" "
+			+ "FROM sales_chances s "
+			+ "LEFT OUTER JOIN users u "
+			+ "ON s.created_user_id = u.id "
+			+ "WHERE s.id = #{id}")
+	public SalesChance get(Integer id);
+	
+	@Delete("delete from sales_chances where id = #{id}")
+	public void delete(@Param("id") Integer id);
+	
+	
+	
+	@Insert("INSERT INTO sales_chances(id, source, cust_name, rate, title, "
+			+ "contact, contact_tel, description, created_user_id, create_date, status) "
+			+ "VALUES(crm_seq.nextval, #{source}, #{custName}, #{rate}, #{title}, "
+			+ "#{contact}, #{contactTel}, #{description}, #{createBy.id}, #{createDate}, #{status})")
+	public void save(SalesChance salesChance);
+	
+	
+	//获取总的记录数
+/*		@Select("select count(id) "
+			+ "from sales_chances "
+		+ "where status = 1 and cust_name like #{custName} and title like #{title} and contact like #{contact}")*/
+	public 	long getTotalElements(Map<String,Object> params);
+//	public 	long getTotalElements();
+	
+
+	
+	//获取当前页的content
+	//获取当前页面的 content
+/*	@Select("SELECT * "
+			+ "FROM("
+			+ "	SELECT rownum rn, id,cust_name,title,contact,contact_tel,create_date "
+			+ "	FROM sales_chances  "
+			+ "	WHERE status = 1 and cust_name like #{custName} and title like #{title} and contact like #{contact}) "
+			+ "WHERE rn >= #{fromIndex} AND rn < #{endIndex}")*/
+	public List<SalesChance> getContent(Map<String,Object> params);
+//	public List<SalesChance> getContent(@Param("fromIndex") int fromIndex ,@Param("endIndex") int endIndex);
+	
+	//通过chanceId获取带SalesPlan的SalesChance对象
+	public SalesChance getSalesChance(Integer id);
+
+
+	@Select("SELECT s.id, source, cust_name, rate, title,u2.name as \"designee.name\", "
+			+ "contact, contact_tel, description, create_date, u1.name as \"createBy.name\" "
+			+ "FROM sales_chances s "
+			+ "LEFT OUTER JOIN sales_plan p "
+			+ "ON s.id = p.chance_id "
+			+ "LEFT OUTER JOIN users u1 "
+			+ "ON s.created_user_id = u1.id "
+			+ "LEFT OUTER JOIN users u2 "
+			+ "ON s.designee_id = u2.id "
+			+ "WHERE s.id = #{id}")
+	public SalesChance getChance(Integer id);
+	
+	@Update(value="update sales_chances set status = 4 where id = #{id}")
+	public void stop(Integer id);
+	
+	@Update(value="update sales_chances set status = 3 where id = #{id}")
+	public void finish(Integer id);
+	
+	@Insert(value="insert into sales_plan(id,plan_date,todo,chance_id) values(crm_seq.nextval,#{date},#{todo},#{chance.id})")
+	public void savePlan(SalesPlan plan);
+
+}
+
+
+

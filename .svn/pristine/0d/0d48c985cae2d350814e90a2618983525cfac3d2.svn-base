@@ -1,0 +1,14 @@
+package com.atguigu.crm.dao;
+
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.SelectKey;
+
+public interface CustomerMapper {
+	
+	@SelectKey(before=true,keyProperty="id",keyColumn="id",statement="select crm_cust_seq.nextval from dual",resultType=Long.class)
+	@Insert("insert into customers(id,name,no,state) values(#{id},#{custName},#{no},#{state})")
+	public void insert(Map<String,Object> map);
+	
+}
