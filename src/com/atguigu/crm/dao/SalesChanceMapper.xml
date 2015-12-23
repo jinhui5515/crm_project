@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.atguigu.crm.dao.SalesChanceMapper">
+
+	<sql id="salesChanceQueryCondition">
+		<if test="status==1">
+			WHERE status = #{status}
+		</if>
+		<if test="status==2">
+			WHERE status = 2 OR status = 3 OR status = 4
+		</if>
+		<if test="custName != null">
+			and cust_name like #{custName}
+		</if>
+		<if test="title != null">
+			and title like #{title}
+		</if>
+		<if test="contact != null">
+			and contact like #{contact}
+		</if>
+		<if test="user != null">
+			and designee_id = #{user.id}
+		</if>
+	</sql>
+	
+	<select id="getTotalElements" resultType="long" >
+		select count(id) 
+		from sales_chances 
+		
+		<include refid="salesChanceQueryCondition"/>
+	</select>
+	
+	
+	<select id="getContent"  resultType="com.atuigu.crm.entity.SalesChance">
+			SELECT * 
+			FROM(
+				SELECT rownum rn, id,cust_name,title,contact,contact_tel,create_date, status,designee_date
+				FROM sales_chances  
+				
+				<include refid="salesChanceQueryCondition"/>
+				
+				) 
+			<![CDATA[
+				WHERE rn >= #{fromIndex} AND rn < #{endIndex} 
+			]]>	  
+			
+	</select>
+	
+		<resultMap type="com.atuigu.crm.entity.SalesChance" id="getSalesChanceResultMap">
+		<id property="id" column="id"/>
+		<result property="contact" column="contact"/>
+		<result property="contactTel" column="contact_tel"/>
+		<result property="createDate" column="create_date"/>
+		<result property="custName" column="custName"/>
+		<result property="description" column="description"/>
+		<result property="designeeDate" column="designee_date"/>
+		<result property="rate" column="rate"/>
+		<result property="source" column="source"/>
+		<result property="status" column="status"/>
+		<result property="title" column="title"/>
+		 <collection property="salesPlans" column="id" ofType="com.atuigu.crm.entity.SalesPlan" 
+		 	select="com.atguigu.crm.dao.SalesPlanMapper.getSalesPalnByChance"/>
+	</resultMap>
+	
+	<select id="getSalesChance" parameterType="Integer" resultMap="getSalesChanceResultMap">
+	
+<!-- 	SELECT s.id, source, cust_name, rate, title, contact, contact_tel, 
+			description, u1.name as "createBy.name" , u2.name as "designee.name", create_date, status  
+			FROM sales_chances s 
+			LEFT OUTER JOIN users u1 
+			ON s.created_user_id = u1.id
+			LEFT OUTER JOIN users u2 
+			ON s.designee_id = u2.id
+			WHERE id=#{id}
+		 -->
+		
+		SELECT s.id, source, cust_name, rate, title,u2.name as "designee.name",
+			contact, contact_tel, description, create_date, u1.name as "createBy.name" 
+			FROM sales_chances s 
+	      	LEFT OUTER JOIN users u1
+	     	ON s.created_user_id = u1.id
+	      	LEFT OUTER JOIN users u2
+	     	ON s.designee_id = u2.id
+	      	WHERE s.id = #{id} 
+	</select>
+	
+	<update id="updateSpecifiedField" parameterType="hashmap">
+		update sales_chances
+		<set>
+			<if test="status != null">
+				status = #{status}
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getContact" resultType="hashmap">
+		select s.contact "name",s.contact_tel "tel",c.id "custId"
+		from sales_chances s left outer join customers c
+		on s.cust_name like c.name
+		where s.id = #{id}
+	</select>
+	
+	
+</mapper>

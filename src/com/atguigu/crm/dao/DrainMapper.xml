@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.atguigu.crm.dao.DrainMapper">
+	<sql id="getCustomerDrain">
+		SELECT * 
+			FROM(
+				SELECT rownum rn, c.id,c.delay,c.drain_date as "drainDate",c2.name as "customer.name",
+				c.last_order_date as "lastOrderDate",c3.name as "customer.manager.name",
+				reason,customer_id,status FROM customer_drains c
+				left outer join customers c2 on c2.id = c.customer_id
+				left outer join contacts c3 on c3.id = c2.manager_id
+	</sql>
+	<sql id="DrainQueryCondition">
+			where 1 = 1
+		
+		<if test="customerName != null and customerName != ''">
+			and c2.name like #{customerName,jdbcType=VARCHAR}
+		</if>
+		<if test="customerManagerName != null and customerManagerName != ''">
+			and c3.name like #{customerManagerName,jdbcType=VARCHAR} 
+		</if>
+	</sql>
+	<select id="getTotalElements" parameterType="map" resultType="Integer">
+		select count(c.id) from customer_drains c 
+		left outer join customers c2 on c2.id = c.customer_id
+		left outer join contacts c3 on c3.id = c2.manager_id
+		<include refid="DrainQueryCondition"/>
+	</select>
+	<select id="getContent" parameterType="map" resultType="com.atuigu.crm.entity.CustomerDrain">
+			<include refid="getCustomerDrain"/>
+			<include refid="DrainQueryCondition"/>)
+			<![CDATA[
+				where rn > #{preIndex,jdbcType=NUMERIC} AND rn <= #{lastIndex,jdbcType=NUMERIC} 
+			]]>	  
+	</select>
+	<select id="getDrainById" parameterType="Integer" resultType="com.atuigu.crm.entity.CustomerDrain">
+			<include refid="getCustomerDrain"/>)
+				where id=#{id}
+			
+	</select>
+	
+	
+</mapper>

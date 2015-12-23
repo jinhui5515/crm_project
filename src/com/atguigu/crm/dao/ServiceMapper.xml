@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.atguigu.crm.dao.ServiceMapper">
+
+	<sql id="serviceQueryCondition">
+			where 1 = 1
+		<if test="serviceType != null and serviceType != ''">
+			and c.SERVICE_TYPE like #{serviceType}
+		</if>
+		<if test="allot != null and allot != ''">
+			and allot_id is null
+		</if>
+		<if test="feedback != null and feedback != ''">
+			and service_state = '已处理'
+		</if>
+		<if test="deal != null and deal != ''">
+			and service_state != '已处理'
+		</if>
+		<if test="archive != null and archive != ''">
+			and service_state = '已归档'
+		</if>
+		<if test="serviceTitle != null and serviceTitle != ''">
+			and c.SERVICE_TITLE like #{serviceTitle}
+		</if>
+		<if test="customerName != null and customerName != ''">
+			and cus.name = #{customer.name}
+		</if>
+		<if test="createDateFrom != null and createDateFrom != ''">
+			<![CDATA[
+				and to_char(c.CREATE_DATE,'yyyy-mm-dd')  >= #{createDate,jdbcType=DATE}
+			]]>
+		</if>
+		<if test="createDateEnd != null and createDateEnd != ''">
+			<![CDATA[
+				and to_char(c.CREATE_DATE,'yyyy-mm-dd') <= #{createDate,jdbcType=DATE}
+			]]>
+		</if>
+		
+	</sql>
+	<sql id="getContentOrService">
+	
+		c.ALLOT_DATE,c.CREATE_DATE,c.DEAL_DATE,                             
+		c.DEAL_RESULT ,c.SATISFY ,c.SERVICE_DEAL,                        
+		c.SERVICE_REQUEST,c.SERVICE_STATE,c.SERVICE_TITLE,                   
+		c.SERVICE_TYPE, u1.name as "allotTo.name" ,                 
+		u2.name as "createdby.name", cus.name as "customer.name"  
+		, u1.id as "allotTo.id" ,u2.id as "createdby.id", 
+		cus.id as "customer.id" FROM customer_services c
+		left outer join users u1 on u1.id = c.ALLOT_ID
+		left outer join users u2 on u2.id = c.CREATED_ID 
+		left outer join customers cus on cus.id = c.customer_id
+	</sql>
+	<select id="getTotalElements" parameterType="map" resultType="Integer">
+		select count(c.id) 
+			FROM customer_services c
+			left outer join users u1 on u1.id = c.ALLOT_ID
+			left outer join users u2 on u2.id = c.CREATED_ID 
+			left outer join customers cus on cus.id = c.customer_id
+		<include refid="serviceQueryCondition"/>
+	</select>
+	<select id="getContent" parameterType="map" resultType="com.atuigu.crm.entity.CustomerService">
+			SELECT * 
+			FROM(SELECT rownum rn, c.id,
+				<include refid="getContentOrService"/>
+				<include refid="serviceQueryCondition"/>)
+			<![CDATA[
+				where rn > #{preIndex} AND rn <= #{lastIndex} 
+			]]>	  
+	</select>
+	
+	<select id="getServiceById" parameterType="Integer" resultType="com.atuigu.crm.entity.CustomerService">
+		SELECT  c.id,
+		<include refid="getContentOrService"/>
+		where c.id=#{id}
+	</select>
+</mapper>

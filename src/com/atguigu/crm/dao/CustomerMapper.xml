@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.atguigu.crm.dao.CustomerMapper">
+
+	<sql id="salesChanceQueryCondition">
+			where c.id != -1
+		<if test="state != null">
+			and c.state = #{state}
+		</if>
+		<if test="level != null">
+			and c.customer_level = #{level} 
+		</if>
+		<if test="managerName != null">
+			and c.chief like #{manager.name}
+		</if>
+		<if test="region != null">
+			and c.region = #{region}
+		</if>
+		<if test="name != null">
+			and c.name like #{name}
+		</if>
+	</sql>
+	<select id="getTotalElements" parameterType="map" resultType="long">
+		select count(c.id) from customers c <include refid="salesChanceQueryCondition"/>
+	</select>
+	<select id="getContent" parameterType="map" resultType="com.atuigu.crm.entity.Customer">
+			SELECT * 
+			FROM(
+				SELECT rownum rn, c.id,c.no,c.name,c2.name as "manager.name",c.region,
+				c.customer_level as "level",c.state FROM customers c
+				left outer join contacts c2 on c2.id = c.manager_id
+				<include refid="salesChanceQueryCondition"/>)
+			<![CDATA[
+				where rn > #{preIndex} AND rn <= #{lastIndex} 
+			]]>	  
+	</select>
+	
+	<resultMap type="com.atuigu.crm.entity.Customer" id="getCustomerByIdResultMap">
+		<id column="id" property="id"/>
+		<result property="no" 			 column="no" />
+		<result property="zip" 			 column="zip"/>
+		<result property="tel" 			 column="tel"/>
+		<result property="fax" 		 	 column="fax"/>
+		<result property="bank" 		 column="bank"/>
+		<result property="name" 	 	 column="name"/>
+		<result property="chief" 		 column="chief"/>
+		<result property="state" 		 column="state"/>
+		<result property="credit" 	 	 column="credit"/>
+		<result property="websit" 		 column="websit"/>
+		<result property="region" 		 column="region"/>
+		<result property="satify" 		 column="satify" />
+		<result property="address" 		 column="address"/>
+		<result property="turnover" 	 column="turnover"/>
+		<result property="bankroll" 	 column="bankroll"/>
+		<result property="bankAccount" 	 column="bank_account"/>
+		<result property="level" 		 column="customer_level"/>
+		<result property="licenceNo" 	 column="licence_no"/>
+		<result property="manager.id" 	 column="manager_id"/>
+		<result property="localTaxNo" 	 column="local_tax_no"/>
+		<result property="nationalTaxNo" column="national_tax_no"/>
+	</resultMap>
+	
+	<select id="getCustomerById" parameterType="Integer" resultMap="getCustomerByIdResultMap">
+		SELECT id,no,name,address,zip,tel,fax,state,bank_account,
+			websit,chief,region,customer_level,manager_id,
+			satify,credit,local_tax_no,national_tax_no,
+			licence_no,bankroll,turnover,bank FROM customers 
+			WHERE id = #{id}
+	</select> 
+</mapper>

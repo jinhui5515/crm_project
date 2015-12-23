@@ -1,0 +1,7 @@
+/applicationContext.xml
+/com/
+/db.properties
+/ehcache-hibernate.xml
+/i18n.properties
+/menu-config.xml
+/mybatis-config.xml

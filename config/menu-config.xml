@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<MenuConfig>
+
+  <Displayers>
+    <Displayer   name="DropDown"
+                 type="net.sf.navigator.displayer.DropDownMenuDisplayer"/>
+  </Displayers>
+
+  <Menus>
+
+    <Menu  name="ToDoListMenuFile"  title="客户关系管理系统"  description="test" width="50">
+       <Item   name="TDLnew"   title="营销管理">
+           <Item   name="TDLnewcase"   title="营销机会管理"    image="images/case-new.png"
+                   location="chance/list"/>
+           <Item   name="TDLnewitem"    title="客户开发计划"   image="images/item-new.png"
+                   location="plan/chance/list"/>
+       </Item>
+       
+       <Item   name="TDLopen"   title="客户管理">
+           <Item   name="TDLopencase"    title="客户信息管理"   image="images/case-open.png"
+                    location="customer/list"/>
+           <Item   name="TDLopenitem"   title="客户流失管理"    image="images/item-open.png"
+                    location="drain/list"/>
+           
+       </Item>
+        <Item   name="TDLserver"   title="服务管理">
+           <Item   name="TDLserver1"    title="服务创建"   image="images/case-open.png"
+                    location="service/input"/>
+           <Item   name="TDLserver2"   title="服务分配"    image="images/item-open.png"
+                    location="service/allot/list"/>
+           <Item   name="TDLserver3"    title="服务处理"   image="images/case-open.png"
+                    location="service/deal/list"/>
+           <Item   name="TDLserver4"   title="服务反馈"    image="images/item-open.png"
+                    location="service/feedback/list"/>
+           <Item   name="TDLserver5"    title="服务归档"   image="images/case-open.png"
+                    location="service/archive/list"/>
+       </Item>
+  		<Item   name="TDLproduct"   title="产品管理">
+           <Item   name="TDLproductitem1"    title="数据字典"   image="images/case-open.png"
+                    location="dict/list"/>
+           <Item   name="TDLproductitem2"   title="产品管理"    image="images/item-open.png"
+                    location="product/list"/>
+           <Item   name="TDLproductitem3"   title="库存管理"    image="images/item-open.png"
+                    location="storage/list"/>
+       </Item>     
+       <Item   name="TDLrole"   title="角色管理">
+           <Item   name="TDLroleitem1"    title="角色查询"   image="images/case-open.png"
+                    location="role/list"/>
+           <Item   name="TDLroleitem2"   title="权限分配"    image="images/item-open.png"
+                    location="role/list"/>
+          
+       </Item>   
+       <Item    name="TDLexit"  title="EXIT"
+                image="images/exit.png"   location="index.jsp"/>
+    </Menu>
+
+  </Menus>
+
+</MenuConfig>
